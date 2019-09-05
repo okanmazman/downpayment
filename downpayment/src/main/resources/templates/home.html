@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="common/header :: common-header" />
+<div th:replace="common/header :: navbar"></div> 
+ 
+<body >
+	
+   <div class="container" style="margin-top:58px">
+
+    
+    
+
+    <!-- Page Features -->
+    <div class="row text-center">
+
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card h-100">
+          <img class="card-img-top" src="http://placehold.it/500x325" alt="">
+          <h4 class="card-title">Request</h4>
+          <div class="card-body">            
+            <p class="card-text">Request for  deposit</p>
+          </div>
+          <div class="card-footer">
+             <a th:href="@{/request}" class="btn btn-primary">Go!</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card h-100">
+          <img class="card-img-top" src="http://placehold.it/500x325" alt="">
+          <div class="card-body">
+            <h4 class="card-title">Send</h4>
+            <p class="card-text">Send  deposit</p>
+          </div>
+          <div class="card-footer">
+            <a th:href="@{/send}" class="btn btn-primary">Go!</a>
+          </div>
+        </div>
+      </div>
+
+     
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+ 
+   
+<div th:replace="common/header :: body-bottom-scripts"></div>
+
+</body>
+
+</html>
