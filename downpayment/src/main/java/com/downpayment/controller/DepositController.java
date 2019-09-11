@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,12 +30,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.downpayment.domain.Credit;
 import com.downpayment.domain.Currency;
 import com.downpayment.domain.Deposit;
+import com.downpayment.domain.Notification;
 import com.downpayment.domain.Role;
 import com.downpayment.domain.User;
 import com.downpayment.domain.UserRole;
 import com.downpayment.service.CreditService;
 import com.downpayment.service.CurrencyService;
 import com.downpayment.service.DepositService;
+import com.downpayment.service.NotificationService;
 import com.downpayment.service.RoleService;
 import com.downpayment.service.UserService;
 import com.downpayment.service.implementation.UserServiceImp;
@@ -55,31 +59,43 @@ public class DepositController {
 	@Autowired
 	private UserService userService; 
 	
+	@Autowired
+	private NotificationService notificationService;
+	
 	@RequestMapping("/send")
 	public String send(Model model,Principal principal,@ModelAttribute("message") String message){
-		currencyService.deleteAll();
-		Currency cur1=new Currency();
-		cur1.setName("Turkish Liras");
-		cur1.setStatus("Active");
+		
+		
 		
 		String username=principal.getName();
 		User user=userService.findByUsername(username);
-		currencyService.save(cur1);
 		
-		Credit credit=new Credit();
+		
+		
 		Optional<Credit> cr=creditService.findByUser(user);
 		List<Currency>currencyList=new ArrayList<Currency>();
 		currencyList=currencyService.findAll();
 		model.addAttribute("currency",currencyList);		
+		if(!model.containsAttribute("deposit"))
 		model.addAttribute("deposit", new Deposit());
+		
 		model.addAttribute("userCredit", cr.get());
+		
 		model.addAttribute("message",message);
 		return "send";
 	}
 	
 
 	@RequestMapping(value="/sendDeposit", method=RequestMethod.POST)
-	public String saveUser(@ModelAttribute  Deposit deposit, HttpServletRequest request,Model model,RedirectAttributes redirectAttributes) {
+	public String saveUser(@Valid @ModelAttribute  Deposit deposit,BindingResult bindingResult, HttpServletRequest request,Model model,RedirectAttributes redirectAttributes) {
+		
+		if (bindingResult.hasErrors()) 
+		{
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.deposit", bindingResult);
+            redirectAttributes.addFlashAttribute("deposit", deposit);
+            return "redirect:/send";
+		}
+		
 		
 		Object principal=SecurityContextHolder.getContext().getAuthentication().getName();
 		User sentByUser=userService.findByUsername(principal.toString());
@@ -89,8 +105,14 @@ public class DepositController {
 		depositService.save(deposit);
 		Optional<Credit> crSentBy=creditService.findByUser(sentByUser);
 		Optional<Credit> crSentTo=creditService.findByUser(sentToUser);
-		float delta=deposit.getAmount();
 		
+		float delta=deposit.getAmount();
+		if(crSentBy.get().getAmount()<delta) {
+			redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.deposit", bindingResult);
+            redirectAttributes.addFlashAttribute("deposit", deposit);
+            return "redirect:/send";
+		}
+			
 		crSentBy.get().setAmount(crSentBy.get().getAmount()-delta);
 		crSentTo.get().setAmount(crSentTo.get().getAmount()+delta);		
 		
@@ -98,10 +120,16 @@ public class DepositController {
 			creditService.save(crSentBy.get());
 			creditService.save(crSentTo.get());
 			
-			redirectAttributes.addAttribute("message","Succesfully sent!");
+			redirectAttributes.addFlashAttribute("message","Succesfully sent!");
+			
+			Notification notification=new Notification();
+			notification.setRelatedDeposit(deposit);
+			notification.setUser(sentToUser);
+			notification.setNotificationText(notification.getNotificationText());
+			notificationService.save(notification);
 			
 		} catch (Exception e) {
-			redirectAttributes.addAttribute("message","Error!Couldn't send!Try again!");
+			redirectAttributes.addFlashAttribute("message","Error!Couldn't send!Try again!");
 		}		
 		
 		return "redirect:/send";

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+ 
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -14,6 +15,7 @@ public class DownpaymentApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DownpaymentApplication.class, args);
+
 	}
 	
 	/*@Scheduled(fixedRate = 4000)

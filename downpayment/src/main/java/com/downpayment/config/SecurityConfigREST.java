@@ -25,37 +25,35 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 
 
 
 
 @Configuration
 @EnableWebSecurity
-@Order(2)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	private static final String[] PUBLIC_MATCHERS = {
-			"/css/**",
-			"/js/**","/register","/saveUser","/index","/"						
-	};
-	
-	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-	
-	
+@Order(1)
+public class SecurityConfigREST extends WebSecurityConfigurerAdapter {
+  
 	@Autowired
     PasswordEncoder passwordEncoder;
 	@Autowired
     private UserDetailsService userDetailsService;
-    
+	@Autowired
+	private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
  
    
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		   http
-           .authorizeRequests()
-               .antMatchers(PUBLIC_MATCHERS).permitAll()
-               .anyRequest().authenticated()
-               .and()
-           .formLogin().usernameParameter("username").passwordParameter("password")
+		   http           
+           .antMatcher("/rest/**").csrf().disable()
+           .authorizeRequests().anyRequest().authenticated().and()
+           .httpBasic().authenticationEntryPoint(authenticationEntryPoint).and()
+           .exceptionHandling()
+           .authenticationEntryPoint(new Http403ForbiddenEntryPoint());
+               
+               
+           /*.formLogin().usernameParameter("username").passwordParameter("password")
                .loginPage("/login")
                .successHandler(new AuthenticationSuccessHandler() {				
 				@Override
@@ -69,11 +67,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                .logout()
                .logoutUrl("/logout")
                .logoutSuccessUrl("/login")
-               .permitAll();
+               .permitAll();*/
 		   
 		   }
 			@Bean
-			public AuthenticationManager customAuthenticationManager() throws Exception {
+			public AuthenticationManager customAuthenticationManager2() throws Exception {
 				return authenticationManager();
 			}
 			@Autowired

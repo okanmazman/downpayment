@@ -7,7 +7,7 @@
 <body >
 	
    <div class="container" style="margin-top:5%">
- 
+   
     <!-- Page Features -->
     
       <form class="form-vertical" th:action="@{/sendDeposit}" method="post" th:object="${deposit}">
@@ -16,19 +16,26 @@
 						<label class="col-md-2 control-label" for="userCredit">Your Credit</label>
 						<div class="col-md-8">
 							<input type="text" name="userCredit" class="form-control" id="userCredit"
-								th:if="${userCredit.amount}!=null"	
+								th:if="${userCredit}!=null"	
 							th:value="${userCredit.amount}" readonly placeholder="Amount" />	
+							
 							<input type="text" name="userCredit" class="form-control" id="userCredit"
-							th:if="${userCredit.amount}==null"	
-							th:value="" readonly placeholder="Amount" />							
+							th:if="${userCredit}==null"	 readonly placeholder="Credit Amount" />							
 						</div>
           </div>
         
         <div class="form-group">
-						<label class="col-md-2 control-label" for="username">Amount</label>
+						<label class="col-md-2 control-label" for="amount">Amount</label>
 						<div class="col-md-8">
-							<input type="text" name="amount" class="form-control" id="amount"
-								th:value="${deposit.amount}" required="required" placeholder="Amount" />							
+							<input type="text" name="amount" class="form-control" id="amount" th:field="*{amount}"
+							th:if="${deposit.amount}!=null"	
+							th:value="${deposit.amount}" required="required" placeholder="Amount" />
+							
+							<input type="text" name="amount" class="form-control" id="amount" th:field="*{amount}"
+							th:if="${deposit.amount}==null"	
+							th:value="" required="required" placeholder="Amount" />
+							<div th:if="${#fields.hasErrors('*{amount}')}" th:errors="*{amount}" value=""></div>
+							<label style="color:rosybrown;display:none" id="amountLimit">Amount cannot be more than your total credit!</label>						
 						</div>
           </div>
           
@@ -43,13 +50,33 @@
           </div>
           
           <div class="form-group">
-						<label class="col-md-2 control-label" for="username">Currency</label>
+						<label class="col-md-2 control-label" for="currency">Currency</label>
 						<div class="col-md-8">
-							 <select class="form-control" th:field="*{id}"  id="currency">
+							 <select class="form-control" name="currency" th:field="*{currency}"  id="currency">
                 <option value="-1">Select Currency</option>
                 <option th:each="currency : ${currency}" th:value="${currency.id}" th:text="${currency.name}"></option>
               </select>						
 						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-md-2 control-label" for="purl">Product URL</label>
+							<img src="/images/spinner-2.gif" style="display:none" id="spinner">
+						<div class="col-md-8">
+							<input type="url" class="form-control" th:value="${deposit.productUrl}" name="productUrl" id="purl" placeholder="Copy & Paste">														        			
+						</div>
+						 
+					</div>
+					<div class="row" style="margin-top:1%;margin-bottom:1.5%">
+					<div class="col-md-2" style="margin-left:0%">
+						<img style="width:150px;height: 150px" src="http://placehold.it/150" alt="" id="productImage">
+					</div>
+					<div class="col-md-8">
+						<textarea class="form-control" rows="5" id="productDescription">
+							
+						</textarea>
+						
+					</div>
 					</div>
 					<div class="form-group">
 						<div class="col-md-2"></div>
@@ -78,12 +105,45 @@
  
    
 <div th:replace="common/header :: body-bottom-scripts"></div>
-<script>
-	/*$("#send").live("click",function(){
-    $("#depositUsername").val($("#depositUsername").val());
-	})*/
+ <script>
+ 
+$("#purl").on("paste",function(e)
+{
+	$("#productImage").attr("src","");
+	$("#productDescription").val("");
+	var element = this;
+  setTimeout(function () {
+    var text = $(element).val();
+		
+		$("#spinner").show();
+			$.ajax
+			({
+				url: "https://api.linkpreview.net?key=5d73a69f012735053f99d12400ffb9eebe6992bf56e82&q="+text,
+				type: "GET",
+				contentType: "application/json",
+				success: function(result){
+					$("#productDescription").val(JSON.stringify(result)); 
+					var imgsrc=jQuery.parseJSON(JSON.stringify(result));
+					$("#productImage").attr("src",imgsrc.image) 
+					$("#spinner").hide();
+				}
+			});
+		
+  }, 10);
 	
-	</script>
+
+})
+ setTimeout(function () {
+	$("#amount").on("keyup",function(){
+		console.log($("#amount").val())
+		console.log($("#userCredit").val())
+		if(parseFloat($("#amount").val())>$("#userCredit").val())
+		$("#amountLimit").show();
+		else
+		$("#amountLimit").hide();
+	});
+},1);
+ </script>
 </body>
 
 </html>

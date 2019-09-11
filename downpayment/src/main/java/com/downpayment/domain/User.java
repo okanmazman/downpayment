@@ -39,6 +39,9 @@ public class User implements UserDetails{
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)	
 	private Set<UserRole> userRoles = new HashSet<UserRole>();
 	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)	
+	private Set<Notification> userNotifications = new HashSet<Notification>();
+	
 	 /*@OneToOne(mappedBy="user",cascade=CascadeType.ALL)	 
 	 private Credit userCredit;
 	
@@ -49,6 +52,14 @@ public class User implements UserDetails{
 	public void setUserCredit(Credit userCredit) {
 		this.userCredit = userCredit;
 	}*/
+
+	public Set<Notification> getUserNotifications() {
+		return userNotifications;
+	}
+
+	public void setUserNotifications(Set<Notification> userNotifications) {
+		this.userNotifications = userNotifications;
+	}
 
 	public Set<UserRole> getUserRoles() {
 		return userRoles;

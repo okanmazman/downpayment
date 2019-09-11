@@ -16,10 +16,5 @@ public class UserSecurityUtility {
 	    public PasswordEncoder passwordEncoder() {
 	        return new BCryptPasswordEncoder(12,new SecureRandom(UserSecurityUtility.SALT.getBytes()));
 	    }
-	    /*@Scheduled(fixedRate=3000)
-	    public void testscheduler() {
-	    	Calendar ads=Calendar.getInstance();
-	    	System.out.println("tessttttt"+ads.getTime().toString());
-	    	
-	    }*/
+	  
 }

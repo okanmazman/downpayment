@@ -1,6 +1,8 @@
 package com.downpayment.controller;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,10 +24,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.downpayment.domain.Credit;
+import com.downpayment.domain.Notification;
 import com.downpayment.domain.Role;
 import com.downpayment.domain.User;
 import com.downpayment.domain.UserRole;
 import com.downpayment.service.CreditService;
+import com.downpayment.service.NotificationService;
 import com.downpayment.service.RoleService;
 import com.downpayment.service.UserService;
 import com.downpayment.service.implementation.UserServiceImp;
@@ -39,7 +43,8 @@ public class HomeController {
 	private UserService userService; 
 	@Autowired
 	private CreditService creditService; 
-	
+	@Autowired
+	private NotificationService notificationService; 
 	
 	
 	//@Autowired
@@ -54,8 +59,13 @@ public class HomeController {
 	
 	@RequestMapping("/home")
 	public String home(Model model){
-		Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
+		 
+		Object principal=SecurityContextHolder.getContext().getAuthentication().getName();
+		User theUser=userService.findByUsername(principal.toString());
+		 
+		Set<Notification>userNotifications=notificationService.findByUser(theUser);
+		model.addAttribute("userNotifications",userNotifications);
+		model.addAttribute("userNotificationCount",userNotifications.size());
 		model.addAttribute("userdetail", "asd");
 		return "home";
 	}
