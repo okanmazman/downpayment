@@ -31,4 +31,38 @@ public class DownpaymentRESTController {
 		
 	}
 	
+	@RequestMapping(value="/rest/getNotificationCountByUser", method = RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)	
+	public int getNotificationCountByUser(@RequestParam(value="username")String username) 
+	{
+		User user=userService.findByUsername(username);
+		Set<Notification>userNotifications=notificationService.findByUser(user);
+		return userNotifications.size();
+		
+	}
+	
+	@RequestMapping(value="/rest/changeNotificationStatusReadTrue", method = RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)	
+	public String changeNotificationStatusReadTrue(@RequestParam(value="id")long id) 
+	{
+		
+		try {
+			Notification notification=notificationService.findById(id);
+			if(notification.isRead())
+				notification.setRead(false);
+			else
+			{
+				notification.setRead(true);
+				notificationService.save(notification);
+			}
+				
+			
+			return "true";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return e.getLocalizedMessage();
+		}
+		
+		
+		
+	}
+	
 }

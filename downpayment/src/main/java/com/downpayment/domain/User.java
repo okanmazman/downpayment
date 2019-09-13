@@ -42,6 +42,7 @@ public class User implements UserDetails{
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)	
 	private Set<Notification> userNotifications = new HashSet<Notification>();
 	
+	private int userNotificationCount=0;
 	 /*@OneToOne(mappedBy="user",cascade=CascadeType.ALL)	 
 	 private Credit userCredit;
 	
@@ -153,6 +154,10 @@ public class User implements UserDetails{
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public int getUserNotificationCount() {
+		return this.getUserNotifications().size();
 	}
 
 	

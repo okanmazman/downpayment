@@ -63,11 +63,22 @@ public class HomeController {
 		Object principal=SecurityContextHolder.getContext().getAuthentication().getName();
 		User theUser=userService.findByUsername(principal.toString());
 		 
-		Set<Notification>userNotifications=notificationService.findByUser(theUser);
+		/*Set<Notification>userNotifications=notificationService.findByUser(theUser);
 		model.addAttribute("userNotifications",userNotifications);
 		model.addAttribute("userNotificationCount",userNotifications.size());
-		model.addAttribute("userdetail", "asd");
+		model.addAttribute("userdetail", "asd");*/
 		return "home";
+	}
+	
+	@RequestMapping("/getUserNotifications")
+	public Set<Notification>getUserNotifications()
+	{
+		Object principal=SecurityContextHolder.getContext().getAuthentication().getName();
+		User theUser=userService.findByUsername(principal.toString());
+		 
+		Set<Notification>userNotifications=notificationService.findByUser(theUser);
+		
+		return userNotifications;
 	}
 	
 	@RequestMapping("/login")	

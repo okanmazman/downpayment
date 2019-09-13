@@ -10,7 +10,7 @@
    
     <!-- Page Features -->
     
-      <form class="form-vertical" th:action="@{/sendDeposit}" method="post" th:object="${deposit}">
+      <form class="form-vertical" th:action="@{/sendDeposit}" method="post" th:object="${deposit}" id="sendForm">
         
         <div class="form-group">
 						<label class="col-md-2 control-label" for="userCredit">Your Credit</label>
@@ -81,8 +81,8 @@
 					<div class="form-group">
 						<div class="col-md-2"></div>
 						<div class="col-md-8">
-							<button type="submit" id="send" class="btn btn-primary">Send</button>
-							<a class="btn btn-warning" th:href="@{/}">Cancel</a>
+							<button type="submit" id="send" th:href="@{/}" class="btn btn-primary">Send</button>
+							<a class="btn btn-warning" >Cancel</a> <!-- th:href="@{/}" -->
 						</div>
 					</div>
 					<div class="form-group">
@@ -90,7 +90,7 @@
 						<div class="col-md-8">
 							<div class="col-md-8">
 							<input type="text"  name="msg" class="form-control" id="msg"  
-								th:if="${message}!=null" th:value="${message}" />		
+								th:if="${message}!=null"  th:value="${messageValue}" th:text="${message}" th:onchange="asd()"/>		
 								<input type="text" name="msg" class="form-control" id="msg"  
 								th:if="${message}==null"/>						
 							</div>            				
@@ -105,7 +105,33 @@
  
    
 <div th:replace="common/header :: body-bottom-scripts"></div>
+
  <script>
+ function checkMessageAndShowAlert () {		
+		if($("#msg").val()=="1")
+		{
+			Swal.fire({
+				  type: 'success',
+				  title: 'Sent!',
+				  text: 'The deposit has been sent successfully!'					  
+				})				
+		}
+		else if($("#msg").val()=="2")
+		{
+			Swal.fire({
+				  type: 'error',
+				  title: 'Oops...',
+				  text: 'Something went wrong!'					  
+				})
+		}
+	};
+ $(document).ready(function(){
+	 
+	 checkMessageAndShowAlert();
+	 })
+
+
+ 
  
 $("#purl").on("paste",function(e)
 {

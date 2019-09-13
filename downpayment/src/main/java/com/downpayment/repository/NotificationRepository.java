@@ -14,7 +14,7 @@ import com.downpayment.domain.Notification;
 
 public interface NotificationRepository extends CrudRepository<Notification, Long> {
  
-	Notification findById(int id);
+	Notification findById(long id);
 
 	@Query(value="SELECT * FROM downpayment.notification n where n.user_id=:userId",nativeQuery=true)
 	public Set<Notification> findByUserId(@Param("userId")Long userId);

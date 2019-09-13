@@ -23,7 +23,11 @@ public class Notification {
 	@CreationTimestamp
 	private Date notificationDate;
 	
-	private boolean isRead;
+	private boolean isRead=false;
+	
+	private boolean isApprovedToSend=false;
+	
+	
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="deposit_id")
@@ -55,8 +59,8 @@ public class Notification {
 	public void setRelatedDeposit(Deposit relatedDeposit) {
 		this.relatedDeposit = relatedDeposit;
 	}
-	public User getUser() {
-		return user;
+	public long getUser() {
+		return this.user.getId();
 	}
 	public void setUser(User user) {
 		this.user = user;
@@ -71,6 +75,13 @@ public class Notification {
 	public void setNotificationText(String notificationText) {
 		this.notificationText = notificationText;
 	}
+	public boolean isApprovedToSend() {
+		return isApprovedToSend;
+	}
+	public void setApprovedToSend(boolean isApprovedToSend) {
+		this.isApprovedToSend = isApprovedToSend;
+	}
+	 
 	
 	
 }
