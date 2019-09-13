@@ -121,15 +121,18 @@ public class DepositController {
 			creditService.save(crSentTo.get());
 			
 			redirectAttributes.addFlashAttribute("message","Succesfully sent!");
+			redirectAttributes.addFlashAttribute("messageValue",1);
 			
 			Notification notification=new Notification();
 			notification.setRelatedDeposit(deposit);
 			notification.setUser(sentToUser);
 			notification.setNotificationText(notification.getNotificationText());
+			notification.setRead(false);
 			notificationService.save(notification);
 			
 		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("message","Error!Couldn't send!Try again!");
+			redirectAttributes.addFlashAttribute("message",e.getMessage()+"--"+e.getLocalizedMessage());
+			redirectAttributes.addFlashAttribute("messageValue",2);
 		}		
 		
 		return "redirect:/send";

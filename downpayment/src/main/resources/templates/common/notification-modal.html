@@ -5,15 +5,15 @@
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<title>Modal</title>
+<title>Your Notification</title>
 
 
 </head>
  
 <body>
 	<!-- Modal -->
-<div th:fragment="modal" class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+<div th:fragment="modal" class="modal fade modal-lg" id="exampleModalLong" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
@@ -22,21 +22,26 @@
         </button>
       </div>
       <div class="modal-body">
-        <table class="table table-dark table-striped table-hover">
-      <tr>
+        <table id="notificationsTable" class="table table-dark table-striped table-hover ">
+      <tr class="table-custom-first-row">
         <th>Id</th>
         <th>Notification Text</th>
-        <th>Read?</th>
+        <th>Read Status</th>
+        <th>Date</th>
+        <th></th>
       </tr>
-      <tr th:each="x : ${userNotifications}">
+       
+      <!--<tr th:each="x : ${userNotifications}">
         <td th:text="${x.id}"></td>
-        <td th:text="${x.notificationText}">2.41</td>        
-      </tr>
+        <td th:text="${x.notificationText}"></td> 
+        <td>
+        <button type="button" class="btn btn-primary">Mark as read</button>       
+        </td>       
+      </tr>-->
     </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>        
       </div>
     </div>
   </div>

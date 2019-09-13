@@ -31,6 +31,9 @@ public class Deposit {
 	@NotEmpty
 	private String sentToUserName;
 	private String productUrl;
+	
+	private boolean isAcceptedBySeller;
+	
 	public String getProductUrl() {
 		return productUrl;
 	}
@@ -90,6 +93,12 @@ public class Deposit {
 	}
 	public int getId() {
 		return id;
+	}
+	public boolean isAcceptedBySeller() {
+		return isAcceptedBySeller;
+	}
+	public void setAcceptedBySeller(boolean isAcceptedBySeller) {
+		this.isAcceptedBySeller = isAcceptedBySeller;
 	}
 	
 	

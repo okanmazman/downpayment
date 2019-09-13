@@ -13,4 +13,5 @@ public interface NotificationService {
 	
 	Notification save(Notification notification);
 	Set<Notification>findByUser(User user);
+	Notification findById(long id);
 }

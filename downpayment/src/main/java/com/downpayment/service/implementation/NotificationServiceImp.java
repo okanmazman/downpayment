@@ -43,6 +43,12 @@ public class NotificationServiceImp implements NotificationService {
 			return sn;
 	}
 
+	@Override
+	public Notification findById(long id) {
+		// TODO Auto-generated method stub
+		return notificationRepository.findById(id);
+	}
+
 	
 	
 	 

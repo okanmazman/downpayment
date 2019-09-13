@@ -1,0 +1,5 @@
+.table-custom-first-row,
+.table-custom-first-row > th,
+.table-custom-first-row > td {
+  background-color: #ffa207;
+}
