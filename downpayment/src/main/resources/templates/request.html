@@ -40,7 +40,7 @@
           </div>
           
           <div class="form-group">
-						<label class="col-md-2 control-label" for="username">Request From</label>
+						<label class="col-md-2 control-label" for="username">Sent To</label>
 						<div class="col-md-8">
 							<input type="text"  name="sentToUserName" class="form-control" id="depositUsername"  
 								th:if="${deposit.sentToUserName}!=null" th:value="${deposit.sentToUserName}" required="required" placeholder="enter username" />		
@@ -49,7 +49,7 @@
 						</div>
           </div>
           
-          <div class="form-group">
+          <!-- <div class="form-group">
 						<label class="col-md-2 control-label" for="currency">Currency</label>
 						<div class="col-md-8">
 							 <select class="form-control" name="currency" th:field="*{currency}"  id="currency">
@@ -57,9 +57,9 @@
                 <option th:each="currency : ${currency}" th:value="${currency.id}" th:text="${currency.name}"></option>
               </select>						
 						</div>
-					</div>
-					
-					<div class="form-group">
+					</div> -->
+
+			<div class="form-group">
 						<label class="col-md-2 control-label" for="purl">Product URL</label>
 							<img src="/images/spinner-2.gif" style="display:none" id="spinner">
 						<div class="col-md-8">
@@ -68,30 +68,33 @@
 						 
 					</div>
 					<div class="row" style="margin-top:1%;margin-bottom:1.5%">
-					<div class="col-md-2" style="margin-left:0%">
-						<img style="width:150px;height: 150px" src="http://placehold.it/150" alt="" id="productImage">
+					<div class="col-md-3" style="margin-left:0%">
+						<img style="width:200px;height: 200px" src="http://placehold.it/200" alt="" id="productImage">
 					</div>
-					<div class="col-md-8">
-						<textarea class="form-control" rows="5" id="productDescription">
-							
-						</textarea>
-						
+					<div class="col-md-7">
+						<label>Title:</label>
+						<div class="panel panel-default">
+ 						<div class="panel-body" id="productTitle" ></div>
+						</div>
+						<label>Description:</label>
+						<div class="panel panel-default">
+ 						<div class="panel-body "id="productDescription"></div>
+						</div>
+					 
 					</div>
 					</div>
 					<div class="form-group">
 						<div class="col-md-2"></div>
 						<div class="col-md-8">
-							<button type="submit" id="send" th:href="@{/}" class="btn btn-primary">Request</button>
-							<a class="btn btn-warning" >Cancel</a> <!-- th:href="@{/}" -->
+							<button type="submit" id="send" th:href="@{/}" class="btn btn-primary btn-lg">Send</button>							
 						</div>
 					</div>
-					<div class="form-group">
-						<label class="col-md-2 control-label" for="msg">Message</label>
+					<div class="form-group">						
 						<div class="col-md-8">
 							<div class="col-md-8">
-							<input type="text"  name="msg" class="form-control" id="msg"  
-								th:if="${message}!=null"  th:value="${messageValue}" th:text="${message}" th:onchange="asd()"/>		
-								<input type="text" name="msg" class="form-control" id="msg"  
+							<input type="hidden"  name="msg" class="form-control" id="msg"  
+								th:if="${message}!=null"  th:value="${messageValue}" th:text="${message}"/>		
+								<input type="hidden" style="display:none"name="msg" class="form-control" id="msg"  
 								th:if="${message}==null"/>						
 							</div>            				
 						</div>
@@ -105,6 +108,7 @@
  
    
 <div th:replace="common/header :: body-bottom-scripts"></div>
+
  <script>
  function checkMessageAndShowAlert () {		
 		if($("#msg").val()=="1")
@@ -125,38 +129,17 @@
 		}
 	};
  $(document).ready(function(){
+	 
 	 checkMessageAndShowAlert();
 	 })
 
 
  
  
-$("#purl").on("paste",function(e)
-{
-	$("#productImage").attr("src","");
-	$("#productDescription").val("");
-	var element = this;
-  setTimeout(function () {
-    var text = $(element).val();
-		
-		$("#spinner").show();
-			$.ajax
-			({
-				url: "https://api.linkpreview.net?key=5d73a69f012735053f99d12400ffb9eebe6992bf56e82&q="+text,
-				type: "GET",
-				contentType: "application/json",
-				success: function(result){
-					$("#productDescription").val(JSON.stringify(result)); 
-					var imgsrc=jQuery.parseJSON(JSON.stringify(result));
-					$("#productImage").attr("src",imgsrc.image) 
-					$("#spinner").hide();
-				}
-			});
-		
-  }, 10);
+
 	
 
-})
+
  setTimeout(function () {
 	$("#amount").on("keyup",function(){
 		console.log($("#amount").val())

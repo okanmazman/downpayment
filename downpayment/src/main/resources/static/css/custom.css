@@ -1,5 +1,38 @@
 .table-custom-first-row,
 .table-custom-first-row > th,
 .table-custom-first-row > td {
-  background-color: #ffa207;
+  background-color: #21231f;
 }
+.error{
+	color:red;
+}
+.btn-primary{
+	color: #fff;
+    background-color: #1b2d3f;
+    border-color: #ffa707fa;
+    border-width: medium;
+	
+}
+body.loginPage{
+background: rgb(2,0,36);
+background: -moz-linear-gradient(138deg, rgba(2,0,36,1) 0%, rgba(2,11,28,1) 6%, rgba(0,112,255,0.4206057422969187) 100%);
+background: -webkit-linear-gradient(138deg, rgba(2,0,36,1) 0%, rgba(2,11,28,1) 6%, rgba(0,112,255,0.4206057422969187) 100%);
+background: linear-gradient(138deg, rgba(2,0,36,1) 0%, rgba(2,11,28,1) 6%, rgba(0,112,255,0.4206057422969187) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#020024",endColorstr="#0070ff",GradientType=1);
+}
+
+./*btn-primary{
+	color: #fff;
+    background-color: #000000;
+    border-color: #ffa707fa;
+    border-width: medium;
+	
+}
+html{
+	min-height:100%;
+}
+label{
+	color:#f2c074;
+	font-weight: 650;
+	
+}*/

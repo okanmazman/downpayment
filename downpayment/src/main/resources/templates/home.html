@@ -19,34 +19,65 @@
           <img class="card-img-top" src="http://placehold.it/500x325" alt="">
           <h4 class="card-title">Request</h4>
           <div class="card-body">            
-            <p class="card-text">Request for  deposit as a seller</p>
+            <p class="card-text">Create a deposit request</p>
           </div>
           <div class="card-footer">
              <a th:href="@{/request}" class="btn btn-primary">Go!</a>
           </div>
         </div>
       </div>
-
+    <div class="col-lg-4 col-md-6 mb-4">
+<!--     <svg style="width:100%;height:100%"> -->
+<!--         <ellipse xmlns="http://www.w3.org/2000/svg" stroke="#ffae00" ry="95" rx="96" id="svg_1" cy="127" cx="129" stroke-width="3.5" fill="#3d3b3b"/> -->
+<!--     <text xmlns="http://www.w3.org/2000/svg" font-weight="bold" font-style="normal" stroke="#ffae00" transform="matrix(3.248698023878106,0,0,2.307609362656312,-168.30063068207676,-130.63831246899312) " xml:space="preserve" text-anchor="start" font-family="'League Gothic', sans-serif" font-size="24" id="svg_text" y="118" x="85" fill="#000000">1</text> -->
+    
+<!--     </svg> -->
+    </div>
       <div class="col-lg-4 col-md-6 mb-4">
         <div class="card h-100">
           <img class="card-img-top" src="http://placehold.it/500x325" alt="">
 			<h4 class="card-title">Send</h4>            
           <div class="card-body">
-            <p class="card-text">Send  deposit  as a buyer</p>
+            <p class="card-text">Send  credit-deposit  directly</p>
           </div>
           <div class="card-footer">
             <a th:href="@{/send}" class="btn btn-primary">Go!</a>
           </div>
         </div>
       </div>
+      
+      </div>
 </div>
      
-
+<!-- /.row -->
     </div>
-    <!-- /.row -->
-
-  </div>
-  <!-- /.container -->
+    <!-- /.container -->
+<div class="container" style="margin-top:10%">
+<h4><label>Your Products</label><a th:href="@{/addProduct}" class="btn btn-primary" style="float:right">Add Product</a> </h4>
+  <table id="notificationsTable" class="table table-dark table-striped table-hover ">
+      <tr class="table-custom-first-row">
+        <th>Product Name</th>
+        <th>Product URL</th>
+        <th>Is Active?</th>
+        <th>Deposit Value</th>
+        <th>Notes</th>
+        <th></th>
+      </tr>
+       
+      <tr th:each="x : ${userProducts}">
+        <td th:text="${x.name}"></td>
+        <a th:href="${x.url}"><td th:text="${x.url}"></td></a>
+        <td th:text="${x.isActive}">
+        <td th:text="${x.requestedValue}"></td> 
+         <td th:text="${x.notes}"></td> 
+          <td>
+        <button type="button" class="btn btn-danger">Unlist</button>       
+        </td>       
+      </tr>
+    </table>
+</div>
+  
+  
  
    
 <div th:replace="common/header :: body-bottom-scripts"></div>

@@ -13,6 +13,13 @@
 <link th:href="@{/css/scrolling-nav.css}" rel="stylesheet" />
 <link th:href="@{/css/sweetalert2.css}" rel="stylesheet" />
 <link th:href="@{/css/custom.css}" rel="stylesheet" />
+<link th:href="@{/css/all.css}" rel="stylesheet" />
+<link th:href="@{/css/easy-autocomplete.css}" rel="stylesheet" />
+<link th:href="@{/css/easy-autocomplete.themes.css}" rel="stylesheet" />
+
+
+
+
 
 
 
@@ -21,7 +28,7 @@
 <body>
 
 	<div th:fragment="navbar">
-	  <div th:replace="common/notification-modal :: modal"></div> 
+	  <div th:insert="common/notification-modal :: notification-modal"></div> 
 		  <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     
@@ -41,10 +48,10 @@
             <a class="nav-link" href="#">About</a>
           </li>
           <li>
-            <button type="button" th:href="@{/getNotificationsByUser}" sec:authorize="isAuthenticated()" class="btn btn-outline-warning"
+            <button type="button" th:href="@{/getNotificationsByUser}" sec:authorize="isAuthenticated()" id="notificationButton" class="btn btn-outline-warning"
             data-toggle="modal" data-target="#exampleModalLong">
               Notifications
-              <span id="notificationCountBadge" class="badge badge-light" th:text="0" th:value="0"/>
+              <span id="notificationCountBadge" class="badge badge-light" th:text="0" value=""/>
             </button>
           </li>
             
@@ -76,9 +83,13 @@
 		<script th:src="@{/js/jquery-3.4.1.min.js}"></script>
 		<script th:src="@{/js/bootstrap.js}"></script>
 		<script th:src="@{/js/scrolling-nav.js}"></script>
-		<script th:src="@{/js/jquery.easing.min.js}"></script>
-		<script th:src="@{/js/app.js}"></script>
+		<script th:src="@{/js/jquery.easing.min.js}"></script>		
 		<script th:src="@{/js/sweetalert2.min.js}"></script>
+		<script th:src="@{/js/all.js}"></script>		
+		<script th:src="@{/js/jquery.easy-autocomplete.js}"></script>
+		<script th:src="@{/js/app.js}"></script>
+		
+		
 			</div>
 	
 </body>

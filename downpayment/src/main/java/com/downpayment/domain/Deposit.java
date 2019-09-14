@@ -24,7 +24,7 @@ public class Deposit {
 	private int id;
 	private String additionalNote;
 	@Min(value=1 ,message="Please enter a valid amount!")
-	private int amount;
+	private double amount;
 	
 	private String currency;	
 	private String sentByUserName;	
@@ -32,7 +32,9 @@ public class Deposit {
 	private String sentToUserName;
 	private String productUrl;
 	
-	private boolean isAcceptedBySeller;
+ 
+	
+	//getters and setters
 	
 	public String getProductUrl() {
 		return productUrl;
@@ -60,10 +62,10 @@ public class Deposit {
 	public void setAdditionalNote(String additionalNote) {
 		this.additionalNote = additionalNote;
 	}
-	public int getAmount() {
+	public  double getAmount() {
 		return amount;
 	}
-	public void setAmount(int amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 	public String getCurrency() {
@@ -94,12 +96,9 @@ public class Deposit {
 	public int getId() {
 		return id;
 	}
-	public boolean isAcceptedBySeller() {
-		return isAcceptedBySeller;
-	}
-	public void setAcceptedBySeller(boolean isAcceptedBySeller) {
-		this.isAcceptedBySeller = isAcceptedBySeller;
+	 
+	
 	}
 	
 	
-}
+

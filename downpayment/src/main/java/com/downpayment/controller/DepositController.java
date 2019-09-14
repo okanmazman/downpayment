@@ -106,7 +106,7 @@ public class DepositController {
 		Optional<Credit> crSentBy=creditService.findByUser(sentByUser);
 		Optional<Credit> crSentTo=creditService.findByUser(sentToUser);
 		
-		float delta=deposit.getAmount();
+		float delta=(float) deposit.getAmount();
 		if(crSentBy.get().getAmount()<delta) {
 			redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.deposit", bindingResult);
             redirectAttributes.addFlashAttribute("deposit", deposit);
@@ -139,7 +139,23 @@ public class DepositController {
 	}
 	
 	@RequestMapping("/request")
-	public String home(Model model){
+	public String home(Model model,Principal principal,@ModelAttribute("message") String message){
+		String username=principal.getName();
+		User user=userService.findByUsername(username);
+		
+		
+		
+		Optional<Credit> cr=creditService.findByUser(user);
+		List<Currency>currencyList=new ArrayList<Currency>();
+		currencyList=currencyService.findAll();
+		model.addAttribute("currency",currencyList);		
+		if(!model.containsAttribute("deposit"))
+		model.addAttribute("deposit", new Deposit());
+		
+		model.addAttribute("userCredit", cr.get());
+		
+		model.addAttribute("message",message);
+		 
 		return "request";
 	}
 	

@@ -35,7 +35,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private static final String[] PUBLIC_MATCHERS = {
 			"/css/**",
-			"/js/**","/register","/saveUser","/index","/"						
+			"/js/**","/register","/saveUser","/index","/","/images/**"						
 	};
 	
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();

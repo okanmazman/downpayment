@@ -25,7 +25,7 @@ public class Notification {
 	
 	private boolean isRead=false;
 	
-	private boolean isApprovedToSend=false;
+	
 	
 	
 	
@@ -75,12 +75,7 @@ public class Notification {
 	public void setNotificationText(String notificationText) {
 		this.notificationText = notificationText;
 	}
-	public boolean isApprovedToSend() {
-		return isApprovedToSend;
-	}
-	public void setApprovedToSend(boolean isApprovedToSend) {
-		this.isApprovedToSend = isApprovedToSend;
-	}
+	
 	 
 	
 	

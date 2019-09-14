@@ -1,11 +1,14 @@
 package com.downpayment.controller;
 
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,12 +28,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.downpayment.domain.Credit;
+import com.downpayment.domain.Currency;
+import com.downpayment.domain.Deposit;
 import com.downpayment.domain.Notification;
+import com.downpayment.domain.Product;
 import com.downpayment.domain.Role;
 import com.downpayment.domain.User;
 import com.downpayment.domain.UserRole;
 import com.downpayment.service.CreditService;
 import com.downpayment.service.NotificationService;
+import com.downpayment.service.ProductService;
 import com.downpayment.service.RoleService;
 import com.downpayment.service.UserService;
 import com.downpayment.service.implementation.UserServiceImp;
@@ -44,6 +52,8 @@ public class HomeController {
 	@Autowired
 	private CreditService creditService; 
 	@Autowired
+	private ProductService productService; 
+	@Autowired
 	private NotificationService notificationService; 
 	
 	
@@ -57,6 +67,22 @@ public class HomeController {
 		return "index";
 	}
 	
+	@RequestMapping("/addProduct")
+	public String send(Model model,Principal principal,@ModelAttribute("message") String message){
+		
+		
+		
+		String username=principal.getName();
+		User user=userService.findByUsername(username);
+		 
+		if(!model.containsAttribute("product"))
+		model.addAttribute("product", new Product());
+						
+		model.addAttribute("message",message);
+		return "addProduct";
+	}
+	
+	
 	@RequestMapping("/home")
 	public String home(Model model){
 		 
@@ -67,19 +93,12 @@ public class HomeController {
 		model.addAttribute("userNotifications",userNotifications);
 		model.addAttribute("userNotificationCount",userNotifications.size());
 		model.addAttribute("userdetail", "asd");*/
+		Set<Product>userProducts=productService.findByUser(theUser);
+		model.addAttribute("userProducts",userProducts);
 		return "home";
 	}
 	
-	@RequestMapping("/getUserNotifications")
-	public Set<Notification>getUserNotifications()
-	{
-		Object principal=SecurityContextHolder.getContext().getAuthentication().getName();
-		User theUser=userService.findByUsername(principal.toString());
-		 
-		Set<Notification>userNotifications=notificationService.findByUser(theUser);
-		
-		return userNotifications;
-	}
+	
 	
 	@RequestMapping("/login")	
 	public String login(){
@@ -122,9 +141,15 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value="/saveUser", method=RequestMethod.POST)
-	public String saveUser(@ModelAttribute  User user, HttpServletRequest request) {
+	public String saveUser(@Valid @ModelAttribute("user")  User user,BindingResult bindingResults) {
 		
+		User userx=userService.findByUsername(user.getUsername());
+		if(userx!=null&&userx.getId()!=null)
+			bindingResults.rejectValue("username","username", "Username exist!");
 		
+		if (bindingResults.hasErrors()) {
+	         return "register";
+	      }
 		System.out.println("savee");
 		PasswordEncoder passEncoder=userSecurityUtility.passwordEncoder();
 		String hashedPass=passEncoder.encode(user.getPassword());
@@ -136,6 +161,20 @@ public class HomeController {
 		 cred.setUser(user);
 		 creditService.save(cred);
 		return "redirect:login";
+	}
+	
+	@RequestMapping(value="/addProduct", method=RequestMethod.POST)
+	public String saveUser(@ModelAttribute  Product product, Model model,Principal principal,HttpServletRequest request) {
+		
+		Deposit deposit =new Deposit();
+		String username=principal.getName();
+		User user=userService.findByUsername(username);
+		deposit.setSentToUserName(user.getUsername());
+		deposit.setAmount(product.requestedValue);
+		product.setUser(user);
+		productService.save(product);				
+		
+		return "redirect:home";
 	}
 	
 }

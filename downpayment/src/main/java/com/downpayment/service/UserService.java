@@ -1,5 +1,6 @@
 package com.downpayment.service;
 
+import java.util.List;
 import java.util.Set;
 
 import com.downpayment.domain.User;
@@ -13,4 +14,6 @@ public interface UserService {
 	User save(User user);
 	
 	User findByUsername(String username);
+	
+	List<User>findAll();
 }
