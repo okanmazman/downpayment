@@ -62,8 +62,13 @@ public class DownpaymentRESTController {
 	public Set<Product> getProductsByUser(@RequestParam(value="username")String username) 
 	{
 		 Set<Product>userProducts=new HashSet<Product>();
-		User user=userService.findByUsername(username);
-		Set<Product> up=productService.findByUser(user);		
+		 Set<Product> up=new HashSet<Product>();
+		 User user=userService.findByUsername(username);
+		
+		if(user!=null) {
+			up=productService.findByUser(user);	
+		}
+				
 	     
 		for (Product product : up) 
 		{

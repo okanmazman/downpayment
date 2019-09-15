@@ -69,8 +69,7 @@ public class Notification {
 		return id;
 	}
 	public String getNotificationText() {
-		return "Amount of "+this.relatedDeposit.getAmount()+" "+this.relatedDeposit.getCurrency()
-		+" has been received from "+this.relatedDeposit.getSentByUserName();
+		return this.notificationText;
 	}
 	public void setNotificationText(String notificationText) {
 		this.notificationText = notificationText;

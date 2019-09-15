@@ -29,6 +29,7 @@ function getUserNotifications () {
 	        }
 	        
 	        console.log(result);
+	        
 	        var unreads=[];
 	        for (var i = 0; i < lines.length; i++) 
 	        {
@@ -36,7 +37,7 @@ function getUserNotifications () {
 	        	unreads.push(lines[i]);
 	        }
 	        $("#notificationCountBadge").text(unreads.length);
-	        
+	        $(".dot").text(unreads.length);
 	        
 	        $.each($("#notificationsTable td[data-isread]"),function(key,val){
 	        	if($(this).data("isread"))
@@ -110,10 +111,11 @@ function getUserNotifications () {
      function searchProductsByUser()     
 	 {
 	   $("#spinnerProductSearch").show();
+	   $("#productsLoaded").hide();
 	   setTimeout(function () {		  
 	   $.ajax({
  	        type: "GET",
- 	        url:  urlHead+"/getProductsByUser?username="+$("#depositUsername").val(),
+ 	        url:  urlHead+"/getProductsByUser?username="+$("#sentToUserName").val(),
  	        dataType: 'json',
  	        async: true,
  	        success: function(result) {
@@ -126,6 +128,7 @@ function getUserNotifications () {
  	        	}
  	        	 
  	        	$("#spinnerProductSearch").hide();
+ 	        	$("#productsLoaded").show();
  	        },
  	        error: function(jqXHR, textStatus, errorThrown) {
  	            console.log(jqXHR.status + ' ' + jqXHR.responseText);
@@ -137,6 +140,7 @@ function getUserNotifications () {
 	   var reqval=$("#userProducts option:selected").data("req-val");
 	   console.log(reqval);	   
 	   $("#amount").val(reqval);
+	   
    })
    
    /*function getAllusers(){
@@ -154,16 +158,27 @@ function getUserNotifications () {
 	            console.log(jqXHR.status + ' ' + jqXHR.responseText);
 	        }})
    }*/
+  
+
+ 
 var options={
 		url: urlHead+"/getAllUsers",
 
 		getValue: "username",
+		template: {
+	        type: "description",
+	        fields: {
+	            description: "email"
+	        }
+	    },
 
-		list: {
-			match: {
-				enabled: true
-			}
-		}
+	    list: {
+	        match: {
+	            enabled: true
+	        }
+	    },
+
+	    theme: "plate-dark"
 }
-$("#depositUsername").easyAutocomplete(options);
+$("#sentToUserName").easyAutocomplete(options);
    

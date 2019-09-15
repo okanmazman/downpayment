@@ -1,4 +1,5 @@
 package com.downpayment.domain;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,25 +12,30 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-public class Deposit {
+public class Deposit implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="id", nullable = false, updatable = false)
 	private int id;
 	private String additionalNote;
 	@Min(value=1 ,message="Please enter a valid amount!")
+	
+	
 	private double amount;
 	
-	private String currency;	
+		
 	private String sentByUserName;	
+	
 	@NotEmpty
 	private String sentToUserName;
+	
 	private String productUrl;
 	
  
@@ -51,7 +57,10 @@ public class Deposit {
 	@CreationTimestamp
 	private Date insertDate;
 	@OneToOne(mappedBy="deposit",cascade=CascadeType.ALL)	 
-	private Credit userCurrentCredit;
+	public Credit userCurrentCredit;
+	
+	@OneToOne(mappedBy="relatedDeposit",cascade=CascadeType.ALL)	 
+	private DepositRequest requestDeposit;
 	
 	@OneToMany(mappedBy="relatedDeposit",cascade=CascadeType.ALL)
 	private Set<Notification> userNotifications = new HashSet<Notification>();
@@ -68,12 +77,7 @@ public class Deposit {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	public String getCurrency() {
-		return currency;
-	}
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
+	 
 	 
 	public String getSentByUserName() {
 		return sentByUserName;
