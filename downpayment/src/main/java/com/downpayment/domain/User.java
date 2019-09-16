@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,6 +34,7 @@ public class User implements UserDetails{
 	private String lastName;
 	
 	@Column(name="email", nullable = false, updatable = false)
+	@Email(message = "Invalid email")
 	private String email;
 	private String phone;
 	
@@ -41,6 +43,10 @@ public class User implements UserDetails{
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)	
 	private Set<Notification> userNotifications = new HashSet<Notification>();
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)	
+	private Set<Product> userProducts = new HashSet<Product>();
+	
+	
 	
 	private int userNotificationCount=0;
 	 /*@OneToOne(mappedBy="user",cascade=CascadeType.ALL)	 

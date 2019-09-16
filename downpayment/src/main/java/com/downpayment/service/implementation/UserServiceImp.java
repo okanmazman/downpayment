@@ -1,5 +1,6 @@
 package com.downpayment.service.implementation;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class UserServiceImp implements UserService {
 	@Override
 	public User save(User user) {
 		// TODO Auto-generated method stub
-		System.out.println("OOOOOOOOOOOKKKKKKKKKKKKKKKKKKKKKKAAAAAAAAAAAAAAAAAAAAAAANNNNNNNNNNNNNNNNNN");
+		
 		return userRepository.save(user);
 	}
 	@Override
@@ -29,6 +30,11 @@ public class UserServiceImp implements UserService {
 	public User findByUsername(String username) {
 		// TODO Auto-generated method stub
 		return userRepository.findByUsername(username);
+	}
+	@Override
+	public List<User> findAll() {
+		// TODO Auto-generated method stub
+		return (List<User>) userRepository.findAll();
 	}
 
 }

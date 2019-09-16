@@ -10,88 +10,97 @@
    
     <!-- Page Features -->
     
-      <form class="form-vertical" th:action="@{/requestDeposit}" method="post" th:object="${deposit}" id="sendForm">
+      <form class="form-vertical" th:action="@{/requestDeposit}" method="post" th:object="${depositRequest}" id="sendForm">
+        <label> I am a </label>
+          <div class="btn-group btn-group-toggle" data-toggle="buttons">
+		  
+		  <label class="btn btn-primary active">
+		    <input type="radio" name="options" id="buyerRadio" value="1" autocomplete="off" checked> Buyer
+		  </label>
+		 
+		  <label class="btn btn-primary" style="margin-left: 2%">
+		    <input type="radio" name="options" id="sellerRadio" value="2" autocomplete="off"> Seller
+		  </label>		  
+	  </div>
         
         <div class="form-group">
 						<label class="col-md-2 control-label" for="userCredit">Your Credit</label>
 						<div class="col-md-8">
-							<input type="text" name="userCredit" class="form-control" id="userCredit"
-								th:if="${userCredit}!=null"	
-							th:value="${userCredit.amount}" readonly placeholder="Amount" />	
+							<input type="text" name="userCredit" class="form-control"  id="userCredit" th:field="*{relatedDeposit.userCurrentCredit.amount}"
+								th:if="${depositRequest.relatedDeposit.userCurrentCredit.amount}!=null"	
+							th:value="${depositRequest.relatedDeposit.userCurrentCredit.amount}" readonly placeholder="Amount" />	
 							
-							<input type="text" name="userCredit" class="form-control" id="userCredit"
-							th:if="${userCredit}==null"	 readonly placeholder="Credit Amount" />							
+							<input type="text" name="userCredit" class="form-control"  id="userCredit" th:field="*{relatedDeposit.userCurrentCredit.amount}"
+							th:if="${depositRequest.relatedDeposit.userCurrentCredit.amount}==null" th:value="${depositRequest.relatedDeposit.userCurrentCredit.amount}"	 readonly placeholder="Credit Amount" />							
 						</div>
           </div>
         
         <div class="form-group">
 						<label class="col-md-2 control-label" for="amount">Amount</label>
 						<div class="col-md-8">
-							<input type="text" name="amount" class="form-control" id="amount" th:field="*{amount}"
-							th:if="${deposit.amount}!=null"	
-							th:value="${deposit.amount}" required="required" placeholder="Amount" />
+							<input type="text" name="amount" readonly class="form-control" id="amount" th:field="*{relatedDeposit.amount}"
+							th:if="${depositRequest.relatedDeposit.amount}!=null"	
+							th:value="${depositRequest.relatedDeposit.amount}" required="required" placeholder="Amount" />
 							
-							<input type="text" name="amount" class="form-control" id="amount" th:field="*{amount}"
-							th:if="${deposit.amount}==null"	
-							th:value="" required="required" placeholder="Amount" />
-							<div th:if="${#fields.hasErrors('*{amount}')}" th:errors="*{amount}" value=""></div>
+							<input type="text" name="amount" readonly class="form-control" id="amount"  th:field="*{relatedDeposit.amount}"
+							th:if="${depositRequest.relatedDeposit}==null"	
+							  required="required" placeholder="Amount" />
+							<div th:if="${#fields.hasErrors('*{relatedDeposit.amount}')}" th:errors="*{relatedDeposit.amount}" value=""></div>
+							
 							<label style="color:rosybrown;display:none" id="amountLimit">Amount cannot be more than your total credit!</label>						
 						</div>
           </div>
           
           <div class="form-group">
-						<label class="col-md-2 control-label" for="username">Request From</label>
-						<div class="col-md-8">
-							<input type="text"  name="sentToUserName" class="form-control" id="depositUsername"  
-								th:if="${deposit.sentToUserName}!=null" th:value="${deposit.sentToUserName}" required="required" placeholder="enter username" />		
-							<input type="text" name="sentToUserName" class="form-control" id="depositUsername"  
-								th:if="${deposit.sentToUserName}==null"  required="required" placeholder="enter username" />						
+						<label class="col-md-2 control-label" for="username">Sent To</label>						 
+						<div class="row" style="margin-left:0%">						 
+							<div class="col-sm-8">
+							<input type="text"  class="form-control" name="sentToUserName" id="sentToUserName"   th:field="*{relatedDeposit.sentToUserName}"
+								th:if="${depositRequest.relatedDeposit.sentToUserName}!=null" th:value="${depositRequest.relatedDeposit.sentToUserName}" required="required" placeholder="enter username to search..." />		
+							
+							<input type="text"  class="form-control" name="sentToUserName" id="sentToUserName"   th:field="*{relatedDeposit.sentToUserName}"
+								th:if="${depositRequest.relatedDeposit.sentToUserName}==null"  value="" required="required" placeholder="enter username to search..." />
+							
+							</div>
+							<div class=col-sm-4>
+							<img src="/images/spinner-2.gif" style="display:none" id="spinnerProductSearch">
+							<button  id="searchProductsByUserName"   type="button" onclick="searchProductsByUser()"  class="btn btn-primary btn-sm">Search for products</button>
+							</div>																															
+						 
 						</div>
           </div>
           
-          <div class="form-group">
-						<label class="col-md-2 control-label" for="currency">Currency</label>
+           <div class="form-group">
+						<label class="col-md-2 control-label" for="userProducts">Products</label>
+						<label class="col-md-2 control-label" id="productsLoaded"  style="display:none;color:green;">Products loaded!</label>
 						<div class="col-md-8">
-							 <select class="form-control" name="currency" th:field="*{currency}"  id="currency">
-                <option value="-1">Select Currency</option>
-                <option th:each="currency : ${currency}" th:value="${currency.id}" th:text="${currency.name}"></option>
-              </select>						
+							 <select class="form-control" name="userProducts" id="userProducts">
+                <option value="-1">Select Products</option>                
+              </select>	
+              					
 						</div>
-					</div>
-					
-					<div class="form-group">
-						<label class="col-md-2 control-label" for="purl">Product URL</label>
-							<img src="/images/spinner-2.gif" style="display:none" id="spinner">
+		  </div>  
+		  <div class="form-group">
+						<label class="col-md-2 control-label" >Expiration Timer</label>
 						<div class="col-md-8">
-							<input type="url" class="form-control" th:value="${deposit.productUrl}" name="productUrl" id="purl" placeholder="Copy & Paste">														        			
+							<input type="number" th:field="*{expirationTimer}">			 
+                                
+              						
 						</div>
-						 
-					</div>
-					<div class="row" style="margin-top:1%;margin-bottom:1.5%">
-					<div class="col-md-2" style="margin-left:0%">
-						<img style="width:150px;height: 150px" src="http://placehold.it/150" alt="" id="productImage">
-					</div>
-					<div class="col-md-8">
-						<textarea class="form-control" rows="5" id="productDescription">
-							
-						</textarea>
-						
-					</div>
-					</div>
+		  </div>
+			
 					<div class="form-group">
 						<div class="col-md-2"></div>
 						<div class="col-md-8">
-							<button type="submit" id="send" th:href="@{/}" class="btn btn-primary">Request</button>
-							<a class="btn btn-warning" >Cancel</a> <!-- th:href="@{/}" -->
+							<button type="submit" id="request" th:href="@{/}" class="btn btn-primary btn-lg">Request</button>							
 						</div>
 					</div>
-					<div class="form-group">
-						<label class="col-md-2 control-label" for="msg">Message</label>
+					<div class="form-group">						
 						<div class="col-md-8">
-							<div class="col-md-8">
-							<input type="text"  name="msg" class="form-control" id="msg"  
-								th:if="${message}!=null"  th:value="${messageValue}" th:text="${message}" th:onchange="asd()"/>		
-								<input type="text" name="msg" class="form-control" id="msg"  
+							<div class="col-md-8" id="msgdiv">
+							<input type="hidden"  name="msg" class="form-control" id="msg"  
+								th:if="${message}!=null"  th:value="${messageValue}" th:text="${message}"/>		
+								<input type="hidden" style="display:none" name="msg" class="form-control" id="msg"  
 								th:if="${message}==null"/>						
 							</div>            				
 						</div>
@@ -105,6 +114,7 @@
  
    
 <div th:replace="common/header :: body-bottom-scripts"></div>
+
  <script>
  function checkMessageAndShowAlert () {		
 		if($("#msg").val()=="1")
@@ -120,43 +130,25 @@
 			Swal.fire({
 				  type: 'error',
 				  title: 'Oops...',
-				  text: 'Something went wrong!'					  
+				  text: $("#msgdiv").text()					  
 				})
 		}
 	};
- $(document).ready(function(){
-	 checkMessageAndShowAlert();
+
+	 $(document).ready(function()
+ 	 {	 
+	 	checkMessageAndShowAlert();
+	 
 	 })
 
-
- 
- 
-$("#purl").on("paste",function(e)
-{
-	$("#productImage").attr("src","");
-	$("#productDescription").val("");
-	var element = this;
-  setTimeout(function () {
-    var text = $(element).val();
-		
-		$("#spinner").show();
-			$.ajax
-			({
-				url: "https://api.linkpreview.net?key=5d73a69f012735053f99d12400ffb9eebe6992bf56e82&q="+text,
-				type: "GET",
-				contentType: "application/json",
-				success: function(result){
-					$("#productDescription").val(JSON.stringify(result)); 
-					var imgsrc=jQuery.parseJSON(JSON.stringify(result));
-					$("#productImage").attr("src",imgsrc.image) 
-					$("#spinner").hide();
-				}
-			});
-		
-  }, 10);
 	
 
-})
+ 
+ 
+
+	
+
+
  setTimeout(function () {
 	$("#amount").on("keyup",function(){
 		console.log($("#amount").val())
