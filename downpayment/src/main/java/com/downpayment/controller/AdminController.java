@@ -22,14 +22,17 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.downpayment.domain.Status;
 import com.downpayment.domain.Credit;
 import com.downpayment.domain.Currency;
 import com.downpayment.domain.Deposit;
+import com.downpayment.domain.DepositRequest;
 import com.downpayment.domain.Notification;
 import com.downpayment.domain.Product;
 import com.downpayment.domain.Role;
@@ -40,6 +43,7 @@ import com.downpayment.service.CurrencyService;
 import com.downpayment.service.NotificationService;
 import com.downpayment.service.ProductService;
 import com.downpayment.service.RoleService;
+import com.downpayment.service.StatusService;
 import com.downpayment.service.UserService;
 import com.downpayment.service.implementation.UserServiceImp;
 import com.downpayment.utility.UserSecurityUtility;
@@ -58,16 +62,35 @@ public class AdminController {
 	private NotificationService notificationService; 
 	@Autowired
 	private CurrencyService currencyService; 	
+	@Autowired
+	private StatusService statusService;
  
 	@Autowired
 	private UserSecurityUtility userSecurityUtility;
 	
 	@RequestMapping("/admin")
-	public String admin(){
+	public String admin(Model model){
+		model.addAttribute("status",new Status());
+		 Set<Status>statusList=statusService.findAll();
+		 model.addAttribute("statusList",statusList);
 		return "admin";
 	}
 	
+	 @RequestMapping("/admin/saveStatusType")
+	public String saveStatusType(@ModelAttribute  Status status,@RequestParam("isActive") boolean isActive,Model model)
+	{
+		 status.setActive(isActive);
+		 if(status!=null)
+		 statusService.save(status);
+		 
+		
+		 return "redirect:/admin";
+	}
 	 
-	
+	 @RequestMapping(value = "/admin/deleteStatus", method = RequestMethod.GET)
+	 public String deleteStatus(@RequestParam (name="statudId")String statusId) {
+		 statusService.deleteById(Long.valueOf(statusId));
+	     return "redirect:/admin";
+	 }
 	
 }

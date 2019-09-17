@@ -50,7 +50,7 @@
              
           </div>
           <div class="card-footer">
-             <a th:href="@{/}" class="btn btn-primary">Show</a>
+             <button data-toggle="modal" data-target="#depositRequestsModal" class="btn btn-primary">Show
           </div>
         </div>
     </div>
@@ -87,7 +87,7 @@
        
       <tr th:each="x : ${userProducts}">
         <td th:text="${x.name}"></td>
-       <td> <a th:href="${x.url}" th:text="${x.url}" target="_blank" ></a></td>
+       <td> <a class="customAnchor" th:href="${x.url}" th:text="${x.url}" target="_blank" ></a></td>
         <td th:text="${x.isActive}">
         <td th:text="${x.requestedValue}"></td> 
          <td th:text="${x.notes}"></td> 

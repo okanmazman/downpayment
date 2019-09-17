@@ -1,10 +1,11 @@
-var urlHead="http://localhost:8586/rest";
+var urlHead="http://localhost:8588/rest";
 var userName=$("#globalUserName").text();
 function getUserNotifications () {
 	 
 	
 	if(userName!=null&&userName!=undefined&&userName!="")
 	{		
+		
 		$.ajax({
 	        type: "GET",
 	        url:  urlHead+"/userNotifications?username="+userName,
@@ -37,7 +38,7 @@ function getUserNotifications () {
 	        	unreads.push(lines[i]);
 	        }
 	        $("#notificationCountBadge").text(unreads.length);
-	        $(".dot").text(unreads.length);
+	        
 	        
 	        $.each($("#notificationsTable td[data-isread]"),function(key,val){
 	        	if($(this).data("isread"))
@@ -75,7 +76,7 @@ function getUserNotifications () {
 		
 	}
    getUserNotifications();
-   setInterval("getUserNotifications()", 80000);
+   setInterval("getUserNotifications()", 60000);
    
    
    var checkIfAnyNewNotification=function(){};
@@ -124,7 +125,7 @@ function getUserNotifications () {
  	        	$("#userProducts option:gt(0)").remove();
  	        	for (var i = 0; i < parsed.length; i++) 
  		        { 	        		
- 	        		$("#userProducts").append("<option value="+parsed[i].id+" data-req-val="+parsed[i].requestedValue+">"+  parsed[i].name +"*Deposit Value=*"+parsed[i].requestedValue+"</option>")	
+ 	        		$("#userProducts").append("<option value="+parsed[i].id+" data-req-val="+parsed[i].requestedValue+">"+  parsed[i].name +"  Deposit Value= "+parsed[i].requestedValue+"</option>")	
  	        	}
  	        	 
  	        	$("#spinnerProductSearch").hide();
@@ -181,4 +182,157 @@ var options={
 	    theme: "plate-dark"
 }
 $("#sentToUserName").easyAutocomplete(options);
+   
+function beginTimer(expirationDate,infodiv)
+{
+	
+	// Update the count down every 1 second
+	var x = setInterval(function() {		
+		
+		var countDownDate = new Date(expirationDate).getTime();
+	  // Get today's date and time
+	  var now = new Date().getTime();
+	    
+	  // Find the distance between now and the count down date
+	  var distance = countDownDate - now;
+	    
+	  // Time calculations for days, hours, minutes and seconds
+	  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+	  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+	  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+	  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+	    
+	  // Output the result in an element with id="demo"
+	  if(document.getElementById(infodiv).innerHTML!=null&&document.getElementById(infodiv).innerHTML!=undefined)
+	  {
+		  document.getElementById(infodiv).innerHTML = days + "d " + hours + "h "
+		  + minutes + "m " + seconds + "s ";	  
+	  }
+	
+	    
+	  // If the count down is over, write some text 
+	  if (distance < 0) {
+	    clearInterval(x);
+	    document.getElementById(infodiv).innerHTML = "EXPIRED";
+	  }
+	}, 1000);
+	
+		
+}
+
+
+function rejectDeposit(requestId){
+	$.ajax({
+        type: "GET",
+        url:  urlHead+"/rejectDepositRequest?requestId="+requestId,
+        dataType: 'json',
+        async: true,
+        success: function(result) {
+        if(result)
+        	getUserDepositRequests();
+        }
+        ,
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status + ' ' + jqXHR.responseText);
+        }})
+}
+
+function getUserDepositRequests ()
+{
+	$.ajax({
+        type: "GET",
+        url:  urlHead+"/userDepositRequests?username="+userName,
+        dataType: 'json',
+        async: true,
+        success: function(result) {
+        stringJsonResult=JSON.stringify(result);
+        parsedResult=JSON.parse(stringJsonResult);
+        var lines = parsedResult;
+        //console.log(lines);
+       
+        $("#depositRequestsTable tr:gt(0)").remove();
+        for (var i = 0; i < lines.length; i++) 
+        {
+        	
+        	 var tableRowHtml="<tr data-status='"+lines[i].status.statusName+"'><td>"+lines[i].relatedDeposit.id
+   		  +"</td><td>"+lines[i].relatedDeposit.amount
+		  +"</td><td>"+lines[i].expirationDate
+		  +"</td><td id='test_"+i+"' data-exp-date='"+lines[i].expirationDate+"'>timer koyulacak"
+		  +"</td><td>"+lines[i].requestDate
+		  +"</td><td>"+lines[i].relatedDeposit.sentToUserName
+		  +"</td><td>"+lines[i].status.statusName
+		  +"</td><td>"+lines[i].expired;
+		  
+		  if(lines[i].status.statusName=="Pending"){
+			  tableRowHtml+="</td><td onclick='acceptDeposit("+lines[i].id+");return false;'><button type='submit'  class='btn btn-outline-success'>Accept</button>" 
+					  +"</td><td onclick='rejectDeposit("+lines[i].id+");return false;'><button type='submit'  class='btn btn-outline-success'>Reject</button>"
+					  +"</td></tr>";
+		  }
+		  else
+			  {
+			  tableRowHtml+="<td><i class='fas fa-info-circle 3x'></i></td></tr>";
+			  }
+          
+		  
+          $("#depositRequestsTable").append(tableRowHtml);	    
+          
+          
+        }
+        
+        console.log(result);
+        
+        var pendingReqs=[];
+        for (var i = 0; i < lines.length; i++) 
+        {
+        	if(lines[i].status.statusName=='Pending')
+        		pendingReqs.push(lines[i]);
+        }
+         
+        $(".dot").text(pendingReqs.length);
+        $.each($("#depositRequestsTable tr:gt(1)"),function(key,value)
+      		  {
+      		  //console.log($("#depositRequestsTable tr:gt('"+key+"')").find("td[data-exp-date]").data("exp-date"))
+      		  beginTimer($("#depositRequestsTable tr:gt('"+key+"')").find("td[data-exp-date]").data("exp-date"),
+      		  "test_"+key)
+
+      		  });	        	       
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status + ' ' + jqXHR.responseText);
+        }})	       
+            	        	
+   
+	
+}
+var  acceptDeposit=function(requestId){
+	
+	$.ajax({
+        type: "GET",
+        url:  urlHead+"/acceptDepositRequest?requestId="+requestId,
+        dataType: 'json',
+        async: true,
+        success: function(result) {
+        if(result)
+        	getUserDepositRequests();
+        
+        Swal.fire({
+			  type: 'success',
+			  title: 'Transaction completed!',
+			  text: 'The deposit transaction completed successfully!'  			  
+			})	
+        }
+        ,
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.status + ' ' + jqXHR.responseText);
+        }})
+}
+getUserDepositRequests();
+setInterval("getUserDepositRequests()", 80000);
+
+
+
+
+
+
+
    

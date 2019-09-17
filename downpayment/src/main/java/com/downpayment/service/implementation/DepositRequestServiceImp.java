@@ -32,7 +32,7 @@ public class DepositRequestServiceImp implements DepositRequestService {
 	}
 
 	@Override
-	public DepositRequest findById(int id) {
+	public DepositRequest findById(long id) {
 		
 		return depositRequestRepository.findById(id);
 	}
@@ -41,6 +41,12 @@ public class DepositRequestServiceImp implements DepositRequestService {
 	public List<DepositRequest> findByUser(User user) {
 		// TODO Auto-generated method stub
 		return depositRequestRepository.findByUserId(user.getId());
+	}
+
+	@Override
+	public Set<DepositRequest> findAll() {
+		// TODO Auto-generated method stub
+		return (Set<DepositRequest>) depositRequestRepository.findAll();
 	}
 	
 	

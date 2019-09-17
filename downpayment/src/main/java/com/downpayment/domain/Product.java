@@ -1,7 +1,11 @@
 package com.downpayment.domain;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,12 +14,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-public class Product {
+public class Product implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="id", nullable = false, updatable = false)
@@ -32,8 +37,12 @@ public class Product {
 	@JoinColumn(name="user_id")
 	private User user;
 	
-	@OneToOne	 
-	private Deposit deposit;
+	@OneToMany(mappedBy="relatedProduct",cascade=CascadeType.ALL,fetch=FetchType.EAGER) 
+	private Set<Deposit> deposit=new HashSet<Deposit>();;
+
+	public void setDeposit(Set<Deposit> deposit) {
+		this.deposit = deposit;
+	}
 
 	public double requestedValue;
 
@@ -80,12 +89,12 @@ public class Product {
 		this.user = user;
 	}
 
-	public Deposit getDeposit() {
-		return deposit;
-	}
+	 
 
-	public void setDeposit(Deposit deposit) {
-		this.deposit = deposit;
+	 
+
+	public Set<Deposit> getDeposit() {
+		return deposit;
 	}
 
 	public long getId() {
