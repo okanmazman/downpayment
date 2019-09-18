@@ -1,6 +1,9 @@
 package com.downpayment;
 
 import java.time.LocalDateTime;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -25,6 +28,11 @@ public class DownpaymentApplication implements CommandLineRunner {
 		System.out.println("test "+start);
 		
 	}*/
+	 @PostConstruct
+	    public void init(){
+	      // Setting Spring Boot SetTimeZone
+	      TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+	    }
 	@Override
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub

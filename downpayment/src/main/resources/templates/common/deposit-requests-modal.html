@@ -5,30 +5,35 @@
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<title>Your Notifications</title>
+<title>Your Requests</title>
 
 
 </head>
  
 <body>
-	<!-- Notification Modal -->
-<!--  --><div th:fragment="notification-modal" class="modal fade" id="exampleModalLong" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+	<!-- Deposit Requests Modal -->
+<!--  --><div th:fragment="deposit-requests-modal" class="modal fade" id="depositRequestsModal" tabindex="-1"  role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
+    <div class="modal-content" style="width:1000px">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Your Notifications</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Your Requests</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <table id="notificationsTable" class="table table-dark table-striped table-hover">
+        <table id="depositRequestsTable" class="table table-dark table-striped table-hover">
 	      <tr class="table-custom-first-row">
 	        <th>Id</th>
-	        <th>Notification Text</th>
-	        <th>Read Status</th>
-	        <th>Date</th>
-	        <th></th>
+	        <th>Requested Value</th>
+	        <th>Expiration Date</th>
+	        <th>Expiration Timer</th>
+	        <th>Request Date</th>
+	        <th>Requester Name</th>
+	        <th>Request Status</th>
+	        <th>Is Expired</th>
+	        <th></th> <!-- Apply -->
+	        <th></th><!-- Reject -->
 	      </tr>      
     </table>
       </div>

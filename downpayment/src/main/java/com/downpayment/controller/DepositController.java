@@ -2,8 +2,10 @@ package com.downpayment.controller;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +34,9 @@ import com.downpayment.domain.Currency;
 import com.downpayment.domain.Deposit;
 import com.downpayment.domain.DepositRequest;
 import com.downpayment.domain.Notification;
+import com.downpayment.domain.Product;
 import com.downpayment.domain.Role;
+import com.downpayment.domain.Status;
 import com.downpayment.domain.User;
 import com.downpayment.domain.UserRole;
 import com.downpayment.service.CreditService;
@@ -40,7 +44,9 @@ import com.downpayment.service.CurrencyService;
 import com.downpayment.service.DepositRequestService;
 import com.downpayment.service.DepositService;
 import com.downpayment.service.NotificationService;
+import com.downpayment.service.ProductService;
 import com.downpayment.service.RoleService;
+import com.downpayment.service.StatusService;
 import com.downpayment.service.UserService;
 import com.downpayment.service.implementation.UserServiceImp;
 import com.downpayment.utility.UserSecurityUtility;
@@ -62,9 +68,14 @@ public class DepositController {
 	private UserService userService; 
 	
 	@Autowired
+	private ProductService productService; 
+	
+	@Autowired
 	private NotificationService notificationService;
 	
 	@Autowired DepositRequestService depositRequestService;
+	
+	@Autowired StatusService statusService;
 	
 	@RequestMapping("/send")
 	public String send(Model model,Principal principal,@ModelAttribute("message") String message){
@@ -104,17 +115,20 @@ public class DepositController {
 		Object principal=SecurityContextHolder.getContext().getAuthentication().getName();
 		User sentByUser=userService.findByUsername(principal.toString());
 		deposit.setSentByUserName(sentByUser.getUsername());
+		deposit.setSentByUserId(sentByUser.getId());
+		User sentToUser=userService.findByUsername(deposit.getSentToUserName().toString());
 		
 		try {
-		User sentToUser=userService.findByUsername(deposit.getSentToUserName().toString());
+		
 		if(sentToUser==null) {
 			redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.depositRequest", bindingResult);
-			  redirectAttributes.addFlashAttribute("deposit", deposit);
+		redirectAttributes.addFlashAttribute("deposit", deposit);
         redirectAttributes.addFlashAttribute("message","User does not exist!");
         redirectAttributes.addFlashAttribute("messageValue",2);
-        return "redirect:/request";
-			
+        return "redirect:/request";		
 		}
+		
+		deposit.setSentToUserId(sentToUser.getId());
 		depositService.save(deposit);
 		Optional<Credit> crSentBy=creditService.findByUser(sentByUser);
 		Optional<Credit> crSentTo=creditService.findByUser(sentToUser);
@@ -181,9 +195,29 @@ public class DepositController {
 	}
 	
 	@RequestMapping("/requestDeposit")
-	public String requestDeposit(@Valid @ModelAttribute  DepositRequest depositRequest,HttpServletRequest request,BindingResult bindingResult,Model model,RedirectAttributes redirectAttributes)
+	public String requestDeposit(@Valid @ModelAttribute  DepositRequest depositRequest,@RequestParam("requestType") String reqType,@RequestParam("userProducts")String prodcutId, HttpServletRequest request,BindingResult bindingResult,Model model,RedirectAttributes redirectAttributes)
 	{
+		Status status=new Status();
+		Object principal=SecurityContextHolder.getContext().getAuthentication().getName();
+		depositRequest.setExpired(false);
+		 Set<Status>statusList= statusService.findAll();
+		 for (Status statusItem : statusList) {
+			 if(statusItem.getStatusName().equals("Pending"))
+				 status=statusItem;
+		}
+		 try {
+			 	Product pr=new Product();
+			 	pr=productService.findById(Long.valueOf(prodcutId));
+			 	depositRequest.getRelatedDeposit().setRelatedProduct(pr);
+				depositService.save(depositRequest.getRelatedDeposit());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		depositRequest.setStatus(status);
 		User sentToUser=userService.findByUsername(depositRequest.getRelatedDeposit().getSentToUserName());
+		User sentByUser=userService.findByUsername(principal.toString());
+		depositRequest.getRelatedDeposit().setSentByUserName(sentByUser.getUsername());
 		
 		if(sentToUser==null) {
 			redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.depositRequest", bindingResult);
@@ -194,19 +228,18 @@ public class DepositController {
         return "redirect:/request";
 			
 		}
+		depositRequest.getRelatedDeposit().setSentByUserId(sentByUser.getId());
+		depositRequest.getRelatedDeposit().setSentToUserId(sentToUser.getId());	
 		if (bindingResult.hasErrors()) 
 		{
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.depositRequest", bindingResult);
             redirectAttributes.addFlashAttribute("depositRequest", depositRequest);
             return "redirect:/request";
 		}
-		
-		
-		Object principal=SecurityContextHolder.getContext().getAuthentication().getName();
-		User sentByUser=userService.findByUsername(principal.toString());
+		 
 		Optional<Credit> crSentBy=creditService.findByUser(sentByUser);
 		
-		
+		depositRequestService.save(depositRequest);
 		float delta=(float) depositRequest.getRelatedDeposit().getAmount();
 		if(crSentBy.get().getAmount()<delta) {
 			redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.depositRequest", bindingResult);
@@ -218,18 +251,13 @@ public class DepositController {
 		
 		try {
 			
-			try {
-				depositService.save(depositRequest.getRelatedDeposit());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			depositRequestService.save(depositRequest);
+			
+			
 			Notification notification=new Notification();
 			notification.setRelatedDeposit(depositRequest.getRelatedDeposit());
 			notification.setUser(sentToUser);
 			notification.setNotificationText("You have a deposit request from "+sentByUser.getFirstName()+" "+sentByUser.getLastName() +"for product "
-							+depositRequest.getRelatedDeposit().getProductUrl()
+							+depositRequest.getRelatedDeposit().getRelatedProduct().getName()
 							+".Deposit Value= "+depositRequest.getRelatedDeposit().getAmount());
 			notification.setRead(false);
 			notificationService.save(notification);

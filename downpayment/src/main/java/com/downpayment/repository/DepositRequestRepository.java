@@ -14,7 +14,8 @@ import com.downpayment.domain.User;
 
 public interface DepositRequestRepository extends CrudRepository<DepositRequest, Long> {
  
-	DepositRequest findById(int id);
-	@Query(value="SELECT * FROM downpayment.deposit_request dr,deposit d where dr.related_deposit_id=d.user_id and d.user_id:userId",nativeQuery=true)
+	DepositRequest findById(long id);
+	@Query(value="SELECT * FROM downpayment.deposit_request dr,downpayment.deposit d where dr.related_deposit_id=d.id and d.sent_to_user_id=:userId",nativeQuery=true)
 	public List<DepositRequest> findByUserId(@Param("userId")Long userId);
+	Set<DepositRequest>findAll();
 }

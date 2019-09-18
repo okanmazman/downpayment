@@ -93,7 +93,8 @@ public class HomeController {
 		model.addAttribute("userNotifications",userNotifications);
 		model.addAttribute("userNotificationCount",userNotifications.size());
 		model.addAttribute("userdetail", "asd");*/
-		Set<Product>userProducts=productService.findByUser(theUser);
+		Set<Product>userProducts=productService.findByUser(theUser);	
+		if(userProducts.size()>0)
 		model.addAttribute("userProducts",userProducts);
 		return "home";
 	}

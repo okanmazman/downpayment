@@ -1,6 +1,7 @@
 package com.downpayment.domain;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -9,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Range;
@@ -21,6 +24,7 @@ public class DepositRequest implements Serializable {
 	private long  id;
 	
 	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date requestDate;
 	
 	@OneToOne
@@ -31,8 +35,8 @@ public class DepositRequest implements Serializable {
 
 	private boolean isExpired;
 	
-	@Range(min = 0l, max=7200,message = "Please select positive numbers Only/max=7200 minutes(5 days)")
-	private int expirationTimer;
+//	@Range(min = 0l, max=7200,message = "Please select positive numbers Only/max=7200 minutes(5 days)")
+	private String expirationDate;
 	
 	private String requestType;
 	
@@ -80,13 +84,15 @@ public class DepositRequest implements Serializable {
 		return id;
 	}
 
-	public int getExpirationTimer() {
-		return expirationTimer;
+	public String getExpirationDate() {
+		return expirationDate;
 	}
 
-	public void setExpirationTimer(int expirationTimer) {
-		this.expirationTimer = expirationTimer;
+	public void setExpirationDate(String expirationDate) {
+		this.expirationDate = expirationDate;
 	}
+
+	 
 
 	 
 	

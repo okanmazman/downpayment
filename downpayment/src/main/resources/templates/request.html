@@ -14,13 +14,15 @@
         <label> I am a </label>
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
 		  
+		  <div class="form group">
 		  <label class="btn btn-primary active">
-		    <input type="radio" name="options" id="buyerRadio" value="1" autocomplete="off" checked> Buyer
+		    <input type="radio" name="requestType" id="buyerRadio"  value="1" autocomplete="off" checked> Buyer
 		  </label>
 		 
 		  <label class="btn btn-primary" style="margin-left: 2%">
-		    <input type="radio" name="options" id="sellerRadio" value="2" autocomplete="off"> Seller
-		  </label>		  
+		    <input type="radio" name="requestType" id="sellerRadio"  value="2" autocomplete="off"> Seller
+		  </label>	
+		  </div>	  
 	  </div>
         
         <div class="form-group">
@@ -80,13 +82,18 @@
               					
 						</div>
 		  </div>  
-		  <div class="form-group">
-						<label class="col-md-2 control-label" >Expiration Timer</label>
-						<div class="col-md-8">
-							<input type="number" th:field="*{expirationTimer}">			 
+		  <div class="form-group input-append date form_datetime">
+						<label class="col-md-2 control-label" >Expiration Date</label>
+						<div class="col-md-8 ">
+<!-- 							<input type="number" th:field="*{expirationTimer}">			  -->
                                 
-              						
+              				
+    						<input size="50" type="text" th:field="*{expirationDate}"  value="" readonly placeholder="Select a date-time..." >    						
+    						<span class="add-on"><i class= "far fa-calendar-alt"></i></span>
 						</div>
+						<div style="color:red" class="col-md-3"id="timer"></div>	
+							
+						
 		  </div>
 			
 					<div class="form-group">
@@ -119,10 +126,11 @@
  function checkMessageAndShowAlert () {		
 		if($("#msg").val()=="1")
 		{
+			
 			Swal.fire({
 				  type: 'success',
 				  title: 'Sent!',
-				  text: 'The deposit has been sent successfully!'					  
+				  text: 'The deposit has been sent successfully!Expiration Date: '  			  
 				})				
 		}
 		else if($("#msg").val()=="2")
@@ -140,12 +148,6 @@
 	 	checkMessageAndShowAlert();
 	 
 	 })
-
-	
-
- 
- 
-
 	
 
 
@@ -159,6 +161,24 @@
 		$("#amountLimit").hide();
 	});
 },1);
+
+
+	 $(".form_datetime").datetimepicker({
+	       format: 'yyyy-mm-dd hh:ii:ss',
+	       autoclose: true,
+	       startDate: new Date()	      
+	   });
+
+
+	 $("#expirationDate").on("change",function(){
+		 beginTimer($("#expirationDate").val(),"timer");
+	})
+	
+	 
+	 
+	 
+
+	
  </script>
 </body>
 
