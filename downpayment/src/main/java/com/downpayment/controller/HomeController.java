@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,6 +57,10 @@ public class HomeController {
 	private ProductService productService; 
 	@Autowired
 	private NotificationService notificationService; 
+	@Autowired
+    PasswordEncoder passwordEncoder;
+	@Autowired
+    private JavaMailSender javaMailSender;
 	
 	
 	//@Autowired
@@ -146,7 +152,7 @@ public class HomeController {
 		
 		User userx=userService.findByUsername(user.getUsername());
 		if(userx!=null&&userx.getId()!=null)
-			bindingResults.rejectValue("username","username", "Username exist!");
+			bindingResults.rejectValue("username","username", "Username exists!");
 		
 		if (bindingResults.hasErrors()) {
 	         return "register";
@@ -177,5 +183,58 @@ public class HomeController {
 		
 		return "redirect:home";
 	}
+	
+	 // Display the form
+    @RequestMapping(value="/forgot-password", method=RequestMethod.GET)
+    public String displayResetPassword(Model model,@RequestParam("username") String username) {               
+        User usr=userService.findByUsername(username);
+    	model.addAttribute("username", usr);
+    	return "forgot-password";
+    }
+    
+    @RequestMapping(value="/forgot-password-post", method=RequestMethod.POST)
+    public String resetPassword(@Valid @ModelAttribute("user")  User user,BindingResult bindingResults) {               
+    	User userx=userService.findByUsername(user.getUsername());
+		if(userx==null)
+			bindingResults.rejectValue("username","username", "There is no user exist!");
+		else if (userx!=null&&userx.getEmail()!=user.getEmail())
+		{
+			bindingResults.rejectValue("email","email", "There is no such an email for this username!");
+		}
+		else
+		{
+			try {
+			    // Instantiate our encoder
+				String xxx="1234";
+
+			    // Right before saving the user on registration, we encode the password
+			    userx.setPassword(passwordEncoder.encode(xxx));
+			    userService.save(userx);
+			    
+			    
+				// Create the email
+	            SimpleMailMessage mailMessage = new SimpleMailMessage();
+	            mailMessage.setTo(userx.getEmail());
+	            mailMessage.setSubject("Your Password E-deposit system!");
+	            mailMessage.setFrom("test-email@gmail.com");
+	            mailMessage.setText("Your username= "+userx.getUsername()+" Your password= "+xxx);
+
+	            // Send the email
+	            //javaMailSender.send(mailMessage);
+
+	            //modelAndView.addObject("message", "Request to reset password received. Check your inbox for the reset link.");
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+	
+		}
+		if (bindingResults.hasErrors()) 
+		{			
+	         return "forgot-password";
+	    }
+		
+		    	return "redirect:login";
+    }
 	
 }

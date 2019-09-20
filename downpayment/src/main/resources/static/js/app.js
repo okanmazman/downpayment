@@ -203,7 +203,7 @@ function beginTimer(expirationDate,infodiv)
 	  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 	    
 	  // Output the result in an element with id="demo"
-	  if(document.getElementById(infodiv).innerHTML!=null&&document.getElementById(infodiv).innerHTML!=undefined)
+	  if(document.getElementById(infodiv)!=null&&document.getElementById(infodiv)!=undefined)
 	  {
 		  document.getElementById(infodiv).innerHTML = days + "d " + hours + "h "
 		  + minutes + "m " + seconds + "s ";	  
@@ -289,7 +289,7 @@ function getUserDepositRequests ()
         }
          
         $(".dot").text(pendingReqs.length);
-        $.each($("#depositRequestsTable tr:gt(1)"),function(key,value)
+        $.each($("#depositRequestsTable tr"),function(key,value)
       		  {
       		  //console.log($("#depositRequestsTable tr:gt('"+key+"')").find("td[data-exp-date]").data("exp-date"))
       		  beginTimer($("#depositRequestsTable tr:gt('"+key+"')").find("td[data-exp-date]").data("exp-date"),
