@@ -201,21 +201,27 @@ public class DownpaymentRESTController {
 	@RequestMapping(value="/rest/rejectDepositRequest", method = RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)	
 	public boolean rejectDepositRequest(@RequestParam(value="requestId")long id) throws Exception
 	{
+		try {
+		DepositRequest dreq=depositRequestService.findById(id);
+		User sentByUser=userService.findByUsername(dreq.getRelatedDeposit().getSentByUserName());
+		User sentToUser=userService.findByUsername(dreq.getRelatedDeposit().getSentToUserName());
 		Status status=new Status();
 		 Set<Status>statusList= statusService.findAll();
 		 for (Status statusItem : statusList) {
 			 if(statusItem.getStatusName().equals("Rejected"))
 				 status=statusItem;
 		}
-		
-		try {
-			DepositRequest dreq=depositRequestService.findById((int) id);
+		 
 			if(dreq.getStatus().getStatusName().equals("Pending"))
 				dreq.setStatus(status);
-				
-				
-				
+				 
 			depositRequestService.save(dreq);
+			Notification notification=new Notification();
+			notification.setRelatedDeposit(dreq.getRelatedDeposit());
+			notification.setUser(sentToUser);
+			notification.setNotificationText("The deposit transaction value of "+dreq.getRelatedDeposit().getAmount() +" from "+ sentByUser.getUsername()+" rejected by  "+sentToUser.getUsername());
+			notification.setRead(false);
+			notificationService.save(notification);
 			return true;
 		} catch (Exception e) {
 			return false;

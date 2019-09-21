@@ -230,7 +230,13 @@ function rejectDeposit(requestId){
         success: function(result) {
         if(result)
         	getUserDepositRequests();
-        }
+        
+        Swal.fire({
+			  type: 'warning',
+			  title: 'Transaction rejected!',
+			  text: 'You refused to accept transaction :('  			  
+			})	
+      }        
         ,
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.status + ' ' + jqXHR.responseText);

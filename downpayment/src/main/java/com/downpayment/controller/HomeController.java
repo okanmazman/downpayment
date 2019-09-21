@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -59,8 +60,8 @@ public class HomeController {
 	private NotificationService notificationService; 
 	@Autowired
     PasswordEncoder passwordEncoder;
-	@Autowired
-    private JavaMailSender javaMailSender;
+	 @Autowired
+	 private JavaMailSender javaMailSender;
 	
 	
 	//@Autowired
@@ -141,11 +142,7 @@ public class HomeController {
 		return "register";
 	}
 	
-	@RequestMapping("/forgot-password")
-	public String forgotPassword() {
-		System.out.println("forgot-password");
-		return "forgot-password";
-	}
+	 
 	
 	@RequestMapping(value="/saveUser", method=RequestMethod.POST)
 	public String saveUser(@Valid @ModelAttribute("user")  User user,BindingResult bindingResults) {
@@ -185,19 +182,20 @@ public class HomeController {
 	}
 	
 	 // Display the form
-    @RequestMapping(value="/forgot-password", method=RequestMethod.GET)
-    public String displayResetPassword(Model model,@RequestParam("username") String username) {               
-        User usr=userService.findByUsername(username);
-    	model.addAttribute("username", usr);
+    @RequestMapping("/forgot-password")
+    public String displayResetPassword(Model model) 
+    {                      
+    	model.addAttribute("user", new User());
     	return "forgot-password";
     }
     
     @RequestMapping(value="/forgot-password-post", method=RequestMethod.POST)
-    public String resetPassword(@Valid @ModelAttribute("user")  User user,BindingResult bindingResults) {               
+    public String resetPassword(@ModelAttribute("user")  User user,BindingResult bindingResults) {               
     	User userx=userService.findByUsername(user.getUsername());
-		if(userx==null)
+		if(userx==null) {
 			bindingResults.rejectValue("username","username", "There is no user exist!");
-		else if (userx!=null&&userx.getEmail()!=user.getEmail())
+		}			
+		else if (userx!=null&&!userx.getEmail().equals(user.getEmail()))
 		{
 			bindingResults.rejectValue("email","email", "There is no such an email for this username!");
 		}
@@ -220,7 +218,7 @@ public class HomeController {
 	            mailMessage.setText("Your username= "+userx.getUsername()+" Your password= "+xxx);
 
 	            // Send the email
-	            //javaMailSender.send(mailMessage);
+	            javaMailSender.send(mailMessage);
 
 	            //modelAndView.addObject("message", "Request to reset password received. Check your inbox for the reset link.");
 				
