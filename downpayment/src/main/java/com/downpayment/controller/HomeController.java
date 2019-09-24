@@ -224,12 +224,12 @@ public class HomeController {
 	            //javaMailSender.send(mailMessage);
 
 	            //Send SMS
-	            String mesaj="Your username= "+userx.getUsername()+" Your password= "+xxx;
-	            final String ACCOUNT_SID = "AC35c2d033c2c73e1e5958f946d9f0841f";
-	 		   final String AUTH_ID = "8ef0c43235e32d9e2d51e126e2030307";
-	 	      Twilio.init(ACCOUNT_SID, AUTH_ID);
-	 		Message.creator(new PhoneNumber("+905364306834"), new PhoneNumber("+12563673667"),
-	 		         mesaj).create();
+	            /*String mesaj="Your username= "+userx.getUsername()+" Your password= "+xxx;
+	            final String ACCOUNT_SID = "";
+	 		    final String AUTH_ID = "";
+	 	       Twilio.init(ACCOUNT_SID, AUTH_ID);
+	 	       Message.creator(new PhoneNumber(""), new PhoneNumber(""),
+	 		         mesaj).create();*/
 	            	
 	            //modelAndView.addObject("message", "Request to reset password received. Check your inbox for the reset link.");
 				
