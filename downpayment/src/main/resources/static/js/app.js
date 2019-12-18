@@ -258,8 +258,7 @@ function getUserDepositRequests ()
        
         $("#depositRequestsTable tr:gt(0)").remove();
         for (var i = 0; i < lines.length; i++) 
-        {
-        	
+        {        	
         	 var tableRowHtml="<tr data-status='"+lines[i].status.statusName+"'><td>"+lines[i].relatedDeposit.id
    		  +"</td><td>"+lines[i].relatedDeposit.amount
 		  +"</td><td>"+lines[i].expirationDate

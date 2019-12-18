@@ -155,7 +155,7 @@ public class DepositController {
 			Notification notification=new Notification();
 			notification.setRelatedDeposit(deposit);
 			notification.setUser(sentToUser);
-			notification.setNotificationText(sentToUser.getFirstName()+" "+sentToUser.getLastName()+" sent you the deposit value of "+deposit.getAmount() );
+			notification.setNotificationText(sentByUser.getFirstName()+" "+sentByUser.getLastName()+" sent you the deposit value of "+deposit.getAmount() );
 			notification.setRead(false);
 			notificationService.save(notification);
 			
